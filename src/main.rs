@@ -1,24 +1,35 @@
-use std::collections::BinaryHeap;
-use std::ptr::null;
 
-enum Operation {
-    Addition,
-    Multiplication
+trait Expression {
+    fn evaluate(&self) -> i32;
 }
 
-enum Number {
-    Value(Option<i32>)
+#[derive(Debug)]
+struct Number {
+    pub val: i32
 }
 
-struct ExpressionNode {
-    pub number: Number,
-    pub operation: Operation,
+impl Expression for Number {
+    fn evaluate(&self) -> i32 {
+        self.val
+    }
+}
+
+struct Sum {
+    pub left: Box<dyn Expression>,
+    pub right: Box<dyn Expression>
+}
+
+impl Expression for Sum {
+    fn evaluate(&self) -> i32 {
+        self.left.evaluate() + self.right.evaluate()
+    }
 }
 
 fn main() {
+    let e = Sum{ left: Box::new(Number{ val: 2}),
+        right: Box::new(Number{ val: 2})
+    };
     let sum = (2 + 2);
-
-    //let mut  heap: BinaryHeap<Expression> = BinaryHeap::new();
-
-    println!("{:#?}", sum);
+    println!("default sum: {:#?}\neval sum: {:#?}", sum, e.evaluate());
 }
+
